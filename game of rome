@@ -1,0 +1,582 @@
+"""
+Created on 19. October 2019 
+
+Author: Georg Stotzingen
+"""
+
+""""
+DocString:
+
+     A) Introduction:
+     This game follows the path of an aspiring young statesman in ancient Rome.
+     After a brief introduction it is set in three stages.
+     
+     1. Getting rich: Raise money with three seperate minigames.
+     2. Senate: Win the support of the Senate to obtain a military command.
+     3. Battle: Defeat an enemy army.
+     
+     B) Known Bugs:
+     All numbers have to be entered as integers. 
+     Writing them out in words as a strg is controlled for and will not 
+     trigger an error message, but it will not be accepted as input.
+     
+"""
+
+#Importing all neccessary packages
+import sys
+import random
+from time import sleep
+
+def game_start():
+    global name
+    
+    print("""\nThe year is 63 B.C. You are a up and coming politician in ancient republican Rome. 
+You have just made the first steps in your political career and were voted into the Senate. 
+You still have a long way ahead of you, but you know your name is meant for greatness.\n""")
+    
+    input("<press enter to start your journey>")
+    
+    print("\nAve, young Roman. Congratulations to your recent election into the Senate! Your first step to greatness!\n")
+    sleep(1)
+    
+    print("By the way, what is your name?")
+    name = input('Input  name: \n')
+#Professor specific Easter Egg. Note the font and color change.
+    if "Chase" in name:
+        print("""You are \033[1;31mChase the Snake Charmer\033[0;0m? Tamer of Python, slayer of Anaconda?
+Considering you are over 2072 years old, you held up quite well.\n""")
+#Check if name already ends in -us
+    elif "us" in name[-2:]:
+        print(f"\nA very Roman Name! Salve {name}!")
+#Manipulate name to make it sound more Latin
+    else:
+        name=name+"us"
+        print(f"That doesn't sound like a proper Roman. Let's call you {name}!")
+
+    input('<Press any key to continue>\n')
+    
+    print("""\nBeeing elected isn't enough to enter the Senate.
+Each Senator needs a fortune of at least 1 million Sesterces.
+You have one week to raise the money. Shall we get started?\n""")
+    
+    input('<Press any key to continue>\n')
+    
+    getting_rich()
+    
+#Stage 2: Getting rich
+
+def getting_rich():
+    
+#Defining variables    
+    days_left=8
+    money_earned=0
+
+#Loop as long as days are left
+    while days_left > 0:
+        days_left = days_left -1 
+
+#Go to next stage if money target is reached      
+        if money_earned >= 1000000:
+            
+            print(f"""\nCongratulations, young Senator!\n 
+You now own {money_earned} Sesterces. You have passed the threshold!\n
+Welcome to the Senate {name}.\n""")
+            
+            senate()
+            break
+            
+            
+#Trigger fail statement if out of time        
+        elif days_left == 0:
+            print("""Your time is up.\n
+You failed to raise 1 Million by the deadline.""")
+            
+            fail()           
+            break
+        
+        
+        print(f"""Your fortune is {money_earned} and you have {days_left} days left.
+You have different ways to earn money:
+1. Work as an accountant.
+2. Gamble.
+3. Marry rich.""")
+
+#Ask for input and control for case sensitivity
+        choice=input("\nWhat do you want to do?\n")
+        choice=choice.lower()
+
+#Game 1 is triggered        
+        if "1" in choice or "work" in choice or "account" in choice:
+            print("""\nCrassus, the richest man in Rome just imported 100 amphorae of wine.
+Each amphora cost him 2 Sesterces.
+He sold them for 5 Sesterces a piece.""")
+#Loop until input is an integer             
+            while True:
+                profit_guess=input("\nWhat's his profit?\n")
+                profit_real= int(300)
+                try:
+                    profit_guess=int(profit_guess)
+                    if profit_guess == profit_real:
+                        print("""\nExcellent! That's correct. You earned 200 Sesterces.
+It's not much, but it's honest work.\n""")
+                        money_earned=money_earned + 200
+                        sleep(1)
+                        break
+                    else:
+                        print("\nThat's wrong! Don't expect payment for that.\n")
+                        sleep(1)
+                        break
+                except:
+                    print("""\nPlease put in a number.""")
+                    continue
+                
+#Game 2 is triggered                
+        elif "2" in choice or "gamble" in choice or "play" in choice:
+            dice = random.randint(1,6)
+            chances = 3
+#Guess the random number. Three chances            
+            print("""\nYou find yourself in a dark tavern on the Aventine Hill.
+Some rough looking fellows play dice in a corner.
+You join in for a game.
+The rules are simple: Guess the dice's number and you win.
+You get three guesses.\n""")
+
+            input('<Press any key to roll the dice>')
+            
+#Looped until either correct guess or out of chances
+#Inner loop forces input as an integer
+            while chances>0:
+                while True:
+                    dice_guess=input('\nWhat is your guess (1-6)?>\n')
+                    try:
+                        dice_guess=int(dice_guess)
+                        chances = chances -1                
+
+                        if dice_guess==dice:
+                            money_earned=money_earned + 400000
+                            print("\nFortuna blessed you! You just won 400000 Sesterces!\n")
+                            input('<Press any key to continue>\n')
+                            sleep(2)
+                            chances = chances - 3
+                            break
+
+                        elif dice_guess != dice and chances > 0:
+                            print(f"\nUnlucky! But you still have {chances} chances remaining.\n")
+
+                        elif dice_guess != dice and chances==0:
+                            print(f"\nWrong again. The number was {dice}.")
+                            input('<Press any key to continue>\n')
+                            sleep(2)
+                            break
+                            
+                    except:
+                        print("""\nPlease put in a number.""")
+                        continue
+                    
+#Game 3 triggered                    
+        elif "3" in choice or "marry" in choice or "marri" in choice or "girl" in choice or "rich" in choice or "wife" in choice or "woman" in choice:
+                
+                print("""\nYou are lucky. The perfect candidate is in town!
+She is rich, pretty, not toooo old and has a heart for young aspiring politicians.
+Go make her yours!\n""")
+                
+                print("""\nWhat is your plan?\n
+1. Send her a love letter.\n
+2. Kidnap her in the middle of the night.""")
+#All inputs controlled for case sensitivity                
+                plan_1=input()
+                plan_1=plan_1.lower()
+                
+                if "1" in plan_1 or "letter" in plan_1 or "love" in plan_1:
+#Second step always gets a free pass                    
+                    print("""\nGood choice! You got an interested response.\n
+What's your next step?\n
+1. Invite her to dinner.\n
+2. Invite her to the games at the colloseum.\n""")
+                    
+                    input()
+                    
+                    print("""\nYour charme is working.You are almost there!\n
+1. Ask her father for her hand.\n
+2. Ask her directly.\n""")
+                    
+                    plan_3=input()
+                    plan_3=plan_3.lower()
+                    
+                    if "1" in plan_3 or "father" in plan_3:
+                        print("""\nShe is a modern independent women.\n
+You really should have asked her directly.\n
+You two are not meant for each other.\n""")
+#Correct guess earns enough money to enter next stage
+#Random inputs lose the minigame. This is a marriage proposal.
+                    elif "2" in plan_3 or "her" in plan_3 or "direct" in plan_3:
+                        
+                        money_earned = money_earned + 1000000
+#Gratulationes is Latin for Congratulations
+                        print("""\nGratulationes! She said yes!\n
+You not only found yourself a beautiful wife.\n
+You also found a fortune. A true politician!\n""")
+#Picture has added \ to negate functions. These won't print.    
+                        print("""
+        _,,,_
+      .'     `'.
+     /     ____ \\
+    |    .'_  _\\/
+    /    ) a  a|
+   /    (    > |
+  (      ) ._  /
+  )    _/-.__.'`\\
+ (  .-'`-.   \\__ )
+  `/      `-./  `.
+   |    \\      \\  \\
+   |     \\   \\  \\  \\
+   |\\     `. /  /   \\
+
+   """)
+                        input('<Press any key to continue>\n')
+                        
+                    else:
+                        print("""\nThat didn't work out too well...\n""")
+                        
+                else:
+                    print("""\nThat didn't work out too well...\n""")
+                    
+#If no games are triggered, this asked for new input and restores days    
+        else:
+            print("""\nPlease be more specific.\n""")
+            days_left=days_left+1
+    
+# Senate Game room
+# In this room you are supposed to get the support of the senate, to gain a military command
+# You are not supposed to fail here
+# If you can't win the first game, you get a quizz with infinite tries
+
+def senate():
+    
+    print("You are now a member of the noble Senate. An honourable position, but you want more.")
+    
+    sleep(1)
+    
+    print("\nA breathless messenger arrives.")
+    input("<press any key to read the letter>")
+    print("""\nThe Gauls are attacking our northern boarder!
+Send troops quickly, or Rome will be overrun!!
+\tSigned: Gaius, Governour of Gallia Narbonensis.""")
+    
+    sleep(1)
+    
+    print("""\nThis is your chance. A military command could solidify your power.
+You need to convince the Senators to make you Commander of the army.
+Each Senator has a different character and different interests.
+If you manage to pull the majority to your side, you will get your command.\n""")
+    
+    sleep(1)
+    
+    input("<press any key to continue>")
+#Create lists
+    support=[]
+    opposition=[]
+    
+    print("""\nSenator Isauricus is a stern supporter of the old values.
+He asks what you are fighting for.\n""")
+    
+    answer_1=input("""1. For power and glory.
+2. The honor of Rome.\n""")
+    
+    answer_1=answer_1.lower()
+#Correct answer secures support. Everything else opposition. Roman Senators don't fool around    
+    if "2" in answer_1 or "honour" in answer_1 or "rome" in answer_1:
+        support.append("Isauricus")
+        print("""\nGood answer! Isauricus supports you.\n""")
+    else:
+        opposition.append("Isauricus")
+        print("""\nHe doesn't like that and won't support you.\n""")
+#Senators are added to appropriate list        
+    print(f"""Your supporters:{support}
+Your opposition:{opposition}""")
+    
+    sleep(1)
+    
+    print("""\nSenator Catilina is a shady figure.
+Yet he has many followers.\n""")
+    
+    answer_2=input("""1. Bribe him.
+2. Invoke his patriotism.\n""")
+    
+    answer_2=answer_2.lower()
+    
+    if "1" in answer_2 or "bribe" in answer_2 or "money" in answer_2:
+        support.append("Catilina")
+        print("""\nGood answer! Catilina supports you.\n""")
+    else:
+        opposition.append("Catilina")
+        print("""\nHe doesn't like that and won't support you.\n""")
+        
+    print(f"""Your supporters:{support}
+Your opposition:{opposition}""")
+    
+    sleep(1)
+    
+    print("""\nSenator Hortensius was once a great advocate.
+But his prime is behind him.\n""")
+    
+    answer_3=input("""1. Threaten him.
+2. Flatter him.\n""")
+    
+    answer_3=answer_3.lower()
+    
+    if "1" in answer_3 or "threat" in answer_3 or "kill" in answer_3:
+        support.append("Hortensius")
+        print("""\nHortensius is not happy, but he has no spine and will support you.\n""")
+    else:
+        opposition.append("Hortensius")
+        print("""\nHe doesn't like that and won't support you.\n""")
+        
+    print(f"""Your supporters:{support}
+Your opposition:{opposition}""")
+    
+    sleep(1)
+    
+    input("""\nYou have talked to all important Senators.
+<press any key to continue>""")
+
+#If number of supporters>than opposition you go to the next game room
+    if len(support)>len(opposition):
+        print(f"""\nYou convinced the Senate that you are fit to save the Republic.
+Congratulations to your first command, General {name}!!\n""")
+        input("<press any key to march your army north>")
+    
+        battle()
+        
+#Otherwise you get a bonus game to get to the next stage        
+    else:
+        print("""\nThe Senate is not convinced.
+Lucky for you, they are desperate. Rome needs a general.
+Answer this question correctly, and the command is yours.\n""")
+        riddle()
+
+def riddle():
+#This minigame loops until you get the right answer
+    while True:
+    
+        answer_4=input("""\nWho is Rome's highest god?
+    \n1. Zeus.
+2. Pluto.
+3. Jupiter.
+4. Mars.\n""")
+
+        answer_4=answer_4.lower()
+
+        if "3" in answer_4 or "jupiter" in answer_4 or "iupiter" in answer_4 or "upit" in answer_4:
+            print(f"""\nCorrect!
+Congratulations to your first command, General {name}!""")
+
+            battle()
+            break
+
+        elif "1" in answer_4 or "zeus" in answer_4:
+            print("""\nWrong! We are in Rome, not Greece!!!""")
+            sleep(2)
+
+        else:
+            print("""\nNo, that is wrong. Try again.""")
+            sleep(2)
+
+#In the next room you fight of the Gallic invasion
+def battle():
+    
+    print("""\nOn the outskirts of Alesia, you finally stand face to face with the Gallic army.
+You are outnumbered, but your tactical leadership may yet secure a victory.
+Just remember, in the heat of battle, clear commands are paramount!
+Everything else will lead to disaster!
+\n""")
+    input("<start the battle>")
+
+#Define variables
+    romans=6000
+    gauls=8000
+    
+#The battle rages on until one army is depleted
+    while romans>0 and gauls>0:
+        sleep(2)
+        print(f"""\nYour troops: {romans}
+Enemy forces: {gauls}\n""")
+        troops = random.randint(1,3)
+        
+#The type of the attacking troop is randomly determined
+#Choose your counter attack accordingly
+#Spearman>Cavalary>Archers>Spearman
+#Same troops fighing give equal losses
+#Unclear commands on the battlefield cause casualties
+    
+        if troops==1:
+            print("""\nThe enemy is attacking with Spearmen.
+How do you want to respond?""")
+            counter=input("""\n1. Send spearmen.
+2. Send archers.
+3. Send cavalary.\n""")
+            counter=counter.lower()
+            
+            if "1" in counter or "spear" in counter:
+                print("""\nYou and your enemy both lost 2000 men.\n""")
+                romans=romans-2000
+                gauls=gauls-2000
+                
+            elif "2" in counter or "arch" in counter:
+                print("""\nYou lost 1000 men, the enemy lost 4000 men.\n""")
+                romans=romans-1000
+                gauls=gauls-4000
+                
+            elif "3" in counter or "cav" in counter:
+                print("""\nYou lost 4000 men the enemy lost 1000.\n""")
+                romans=romans-4000
+                gauls=gauls-1000
+                
+            else:
+                print("""\nThe command was unclear.
+In the confusion you lost 1000 men, while the enemy lost nothing.\n""")
+                romans=romans-1000
+                gauls=gauls
+                
+                
+        if troops==2:
+            print("""\nThe enemy is attacking with Archers.
+How do you want to respond?""")
+            counter=input("""\n1. Send spearmen.
+2. Send archers.
+3. Send cavalary.\n""")
+            counter=counter.lower()
+            
+            if "1" in counter or "spear" in counter:
+                print("""\nYou lost 4000 men the enemy lost 1000.\n""")
+                romans=romans-4000
+                gauls=gauls-1000
+                
+            elif "2" in counter or "arch" in counter:
+                print("""\nYou and your enemy both lost 2000 men.\n""")
+                romans=romans-2000
+                gauls=gauls-2000
+                
+            elif "3" in counter or "cav" in counter:
+                print("""\nYou lost 1000 men, the enemy lost 4000 men.\n""")
+                romans=romans-1000
+                gauls=gauls-4000
+                
+            else:
+                print("""\nThe command was unclear.
+In the confusion you lost 1000 men, while the enemy lost nothing.\n""")
+                romans=romans-1000
+                gauls=gauls
+                
+                
+        if troops==3:
+            print("""\nThe enemy is attacking with Cavalary.
+How do you want to respond?""")
+            counter=input("""\n1. Send spearmen.
+2. Send archers.
+3. Send cavalary.\n""")
+            counter=counter.lower()
+            
+            if "1" in counter or "spear" in counter:
+                print("""\nYou lost 1000 men, the enemy lost 4000 men.\n""")
+                romans=romans-1000
+                gauls=gauls-4000
+                
+            elif "2" in counter or "arch" in counter:
+                print("""\nYou lost 4000 men the enemy lost 1000.\n""")
+                romans=romans-4000
+                gauls=gauls-1000
+                
+            elif "3" in counter or "cav" in counter:
+                print("""\nYou and your enemy both lost 2000 men.\n""")
+                romans=romans-2000
+                gauls=gauls-2000
+                
+            else:
+                print("""\nThe command was unclear.
+In the confusion you lost 1000 men, while the enemy lost nothing.\n""")
+                romans=romans-1000
+                gauls=gauls
+                
+
+#If enemy wins fail statement is triggered. Note the color change
+    if gauls>0 and romans<=0:
+        print("""\nYour troops have been defeated.
+The path to Rome is clear and the city will \033[0;31mburn\033[0;0m!\n""")
+        fail()
+
+#If you win, win statement is triggered. Note the bold font.
+    elif gauls<=0 and romans>0:
+        print(f"""\nVictory! You defeated the Barbarians.
+Your troops salute you!
+\033[1mAve Imperator {name}!!\033[0m""")
+        success()
+
+#If both armies are destroyed, win statement is also triggered. Rome is save.
+    elif gauls<=0 and romans<=0:
+        print("""\nThe city is saved, the enemy defeated.
+But at what cost.
+You gather what troops you have left and march back home.""")
+        success()
+
+    
+#win statement.   
+def success(): 
+    print("""
+ __   __                                _ _ 
+ \ \ / /__  _   _  __      _____  _ __ | | |
+  \ V / _ \| | | | \ \ /\ / / _ \| '_ \| | |
+   | | (_) | |_| |  \ V  V / (_) | | | |_|_|
+   |_|\___/ \__,_|   \_/\_/ \___/|_| |_(_|_)
+                                            
+""") 
+    
+    print("""\nCongratulations, your name will be remembered in eternity.\n""")
+
+#Loop asks for restart or exit
+    while True:
+        again=input("""Do you want to try again? (y/n).\n""")
+        again=again.lower()
+        if again=="y":
+            game_start()
+
+        elif again=="n":
+            sys.exit(0)
+
+        else:
+            print("Something went wrong. Please try again.")
+
+
+# Fail function
+
+def fail():
+    
+    print("""
+    
+    
+██╗   ██╗ ██████╗ ██╗   ██╗    ██╗      ██████╗ ███████╗████████╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║     ██╔═══██╗██╔════╝╚══██╔══╝
+ ╚████╔╝ ██║   ██║██║   ██║    ██║     ██║   ██║███████╗   ██║   
+  ╚██╔╝  ██║   ██║██║   ██║    ██║     ██║   ██║╚════██║   ██║   
+   ██║   ╚██████╔╝╚██████╔╝    ███████╗╚██████╔╝███████║   ██║   
+   ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝ ╚═════╝ ╚══════╝   ╚═╝   
+                                                                 
+""")
+    
+    sleep(2)
+#Loop asks for restart or exit    
+    while True:
+        again=input("""Do you want to try again? (y/n)\n""")
+        again=again.lower()
+        if again=="y":
+            game_start()
+
+        elif again=="n":
+            sys.exit(0)
+
+        else:
+            print("Something went wrong. Please try again.")
+            
+#Thank you for playing!!
+
+game_start()
